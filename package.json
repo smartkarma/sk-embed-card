@@ -21,7 +21,10 @@
     "reason-react": ">=0.7.0"
   },
   "devDependencies": {
+    "@glennsl/bs-json": "^5.0.1",
+    "bs-fetch": "^0.5.0",
     "bs-platform": "^5.2.1",
-    "moduleserve": "^0.8.4"
+    "moduleserve": "^0.8.4",
+    "remotedata-re": "^0.2.1"
   }
 }
