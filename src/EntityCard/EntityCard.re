@@ -9,7 +9,6 @@ type entity = {
 type attributes('a) = 'a
 
 type data = {
-  id: string,
   attributes: attributes(entity),
 };
 
@@ -26,14 +25,18 @@ let decodeAttributes = (parentJson, json) =>
 
 let decodeData = json =>
   Json.Decode.{
-    id: json |> field("id", string),
     attributes: json |> field("attributes", decodeAttributes(json)),
   }
 
 let decodeJsonData = json =>
   Json.Decode.{
     data: json |> field("data", decodeData)
-  }
+  } 
+
+let decodeRecord = json => 
+  json |> decodeJsonData |> (
+    jsonData => jsonData.data.attributes
+  )
 
 let apiEndpoint = "https://sk-web-staging.smartkarma.com/api/v2/entities/dbs-group-holdings-ltd";
 
@@ -63,14 +66,12 @@ let fetchEntity = (dispatch) => {
     )
     |> then_(Fetch.Response.json)
     |> then_(json => {
-        json |> decodeJsonData |> (
-          (jsonData) => {
-             let entity = jsonData.data.attributes;
+        json |> decodeRecord |> (
+          (entity) => {
              dispatch(EntityLoaded(entity));
              resolve();
            }
          )
-
     }
        )
     |> catch((_) =>  {

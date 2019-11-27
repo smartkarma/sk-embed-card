@@ -16,16 +16,18 @@ function decodeAttributes(parentJson, json) {
 }
 
 function decodeData(json) {
-  return /* record */[
-          /* id */Json_decode.field("id", Json_decode.string, json),
-          /* attributes */Json_decode.field("attributes", (function (param) {
+  return /* record */[/* attributes */Json_decode.field("attributes", (function (param) {
                   return decodeAttributes(json, param);
-                }), json)
-        ];
+                }), json)];
 }
 
 function decodeJsonData(json) {
   return /* record */[/* data */Json_decode.field("data", decodeData, json)];
+}
+
+function decodeRecord(json) {
+  var jsonData = decodeJsonData(json);
+  return jsonData[/* data */0][/* attributes */0];
 }
 
 var apiEndpoint = "https://sk-web-staging.smartkarma.com/api/v2/entities/dbs-group-holdings-ltd";
@@ -48,8 +50,7 @@ function fetchEntity(dispatch) {
                   ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined)(/* () */0)).then((function (prim) {
               return prim.json();
             })).then((function (json) {
-            var jsonData = decodeJsonData(json);
-            var entity = jsonData[/* data */0][/* attributes */1];
+            var entity = decodeRecord(json);
             Curry._1(dispatch, /* EntityLoaded */Block.__(0, [entity]));
             return Promise.resolve(/* () */0);
           })).catch((function (param) {
@@ -123,6 +124,7 @@ var make = EntityCard;
 exports.decodeAttributes = decodeAttributes;
 exports.decodeData = decodeData;
 exports.decodeJsonData = decodeJsonData;
+exports.decodeRecord = decodeRecord;
 exports.apiEndpoint = apiEndpoint;
 exports.fetchEntity = fetchEntity;
 exports.initialState = initialState;
