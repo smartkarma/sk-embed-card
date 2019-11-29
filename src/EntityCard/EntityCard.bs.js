@@ -112,12 +112,12 @@ function EntityCard(Props) {
               }, "Loading...") : (
             entity !== undefined ? React.createElement("div", {
                     className: "bg-white shadow rounded flex overflow-scroll w-2/5 mb-8 mt-8"
-                  }, entity[/* shortName */1], React.createElement(PriceChart$ReasonReactExamples.make, { })) : null
+                  }, entity[/* shortName */1]) : null
           ));
   }
   return React.createElement("div", {
               className: "h-screen w-full bg-pink-lightest flex flex-col justify-start items-center overflow-scroll"
-            }, tmp);
+            }, React.createElement(PriceChart$ReasonReactExamples.make, { }), tmp);
 }
 
 var make = EntityCard;

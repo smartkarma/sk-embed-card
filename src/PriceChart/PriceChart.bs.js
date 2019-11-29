@@ -1,22 +1,62 @@
 'use strict';
 
-var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
+var Highcharts = require("highcharts");
+var Exporting = require("highcharts/modules/exporting");
 
-var add = (
-  function() {
-    console.log(am4core);
+Exporting(Highcharts);
+
+var option = {
+  chart: {
+    type: "bar"
+  },
+  series: /* array */[
+    {
+      name: "Jane",
+      data: /* array */[
+        1,
+        0,
+        4
+      ]
+    },
+    {
+      name: "Jone",
+      data: /* array */[
+        5,
+        7,
+        3
+      ]
+    }
+  ],
+  title: {
+    text: "Fruit Consumption"
+  },
+  xAxis: {
+    categories: /* array */[
+      "Apples",
+      "Bananas",
+      "Oranges"
+    ]
+  },
+  yAxis: {
+    title: {
+      text: "Fruit eaten"
+    }
   }
-);
-
-console.log(Curry._1(add, /* () */0));
+};
 
 function PriceChart(Props) {
-  return React.createElement("div", undefined, "Test");
+  React.useEffect((function () {
+          Highcharts.chart("container", option);
+          return ;
+        }));
+  return React.createElement("div", undefined, React.createElement("div", {
+                  id: "container"
+                }, "Main"));
 }
 
 var make = PriceChart;
 
-exports.add = add;
+exports.option = option;
 exports.make = make;
-/* add Not a pure module */
+/*  Not a pure module */

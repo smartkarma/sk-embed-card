@@ -116,6 +116,7 @@ let make = () => {
 
   <div
     className="h-screen w-full bg-pink-lightest flex flex-col justify-start items-center overflow-scroll">
+    <PriceChart />
     {switch (state.entity) {
      | NotAsked => React.null
      | Failure(e) => <p> {React.string(e)} </p>
@@ -135,7 +136,6 @@ let make = () => {
             | Some(entity) => 
               <div className="bg-white shadow rounded flex overflow-scroll w-2/5 mb-8 mt-8">
                 {React.string(entity.shortName)}
-                <PriceChart />
               </div>
             }
           }
