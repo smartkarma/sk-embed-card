@@ -39,6 +39,7 @@ let decodeRecord = json =>
   )
 
 let apiEndpoint = "https://sk-web-staging.smartkarma.com/api/v2/entities/dbs-group-holdings-ltd";
+let token = "Token token=\"eQeRBgUUJ3CVtuRAK99R\", email=\"echeng@glgroup.com\"";
 
 type action =
   | Loading
@@ -59,7 +60,7 @@ let fetchEntity = (dispatch) => {
           Fetch.HeadersInit.makeWithArray([|
             ("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8"),
             ("API-TOKEN", "8yz1xx6eqxaR69hvtLLhDMuegVPn1g"),
-            ("authorization", "Token token='7Uek8JCj49yPDXnZksaE', email='lc@smartkarma.com'"),
+            ("authorization", token),
           |]),
         ()
       )

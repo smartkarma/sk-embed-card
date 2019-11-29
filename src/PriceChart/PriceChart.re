@@ -57,10 +57,88 @@ let option = hcOption(
 
 [@bs.module "highcharts"] [@ba.val] external chart: (string, hcOption) => unit = "chart";
 
+
+
+type priceData('a) = RemoteData.t('a, 'a, string);
+
+type price =  {
+  close: array(float),
+};
+
+let decodePrice = json => 
+  Json.Decode.{
+    close: json |> field("close", array(float))
+  };
+
+type action =
+  | Loading
+  | PriceLoaded(price)
+  | PriceError(string);
+
+let priceEndpoint = "https://silat-staging.smartkarma.com/v1/chart/D05.SI?start-time=2018-11-28";
+let token = "Token token=\"eQeRBgUUJ3CVtuRAK99R\", email=\"echeng@glgroup.com\"";
+
+let fetchPrice = (dispatch) => {
+  dispatch(Loading);
+  Js.Promise.(
+    Fetch.fetchWithInit(
+      priceEndpoint,
+      Fetch.RequestInit.make(
+        ~headers=
+          Fetch.HeadersInit.makeWithArray([|
+            ("authorization", token),
+            ("x-sk-authorization", token),
+          |]),
+        ()
+      )
+    )
+    |> then_(Fetch.Response.json)
+    |> then_(json => {
+        json |> decodePrice |> (
+          (price) => {
+              Js.log(price);
+             dispatch(PriceLoaded(price));
+             resolve();
+           }
+         )
+    }
+       )
+    |> catch((_) =>  {
+        dispatch(PriceError("Error fetching the data")) 
+        resolve()
+    })
+  );
+  ()
+};
+
+
+type state = {
+  price: priceData(option(price))
+};
+
+let initialState = {price: RemoteData.NotAsked};
+
+let reducer = (state, action) =>
+  switch (action) {
+  | Loading =>
+    {
+      ...state,
+      price: RemoteData.Loading(None),
+    };
+  | PriceLoaded(price) => {...state, price: RemoteData.Success(Some(price))}
+  | PriceError(err) => {...state, price: RemoteData.Failure(err)}
+  };
+
 [@react.component]
 let make = () => {
+  let (state, dispatch) = React.useReducer(reducer, initialState);
+
   React.useEffect(() => {
     chart("container", option);
+    switch (state.price) {
+    | NotAsked => fetchPrice(dispatch)
+    | _ => ()
+    }
     None;
   });
 

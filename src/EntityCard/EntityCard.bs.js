@@ -33,6 +33,8 @@ function decodeRecord(json) {
 
 var apiEndpoint = "https://sk-web-staging.smartkarma.com/api/v2/entities/dbs-group-holdings-ltd";
 
+var token = "Token token=\"eQeRBgUUJ3CVtuRAK99R\", email=\"echeng@glgroup.com\"";
+
 function fetchEntity(dispatch) {
   Curry._1(dispatch, /* Loading */0);
   fetch(apiEndpoint, Fetch.RequestInit.make(undefined, /* array */[
@@ -46,7 +48,7 @@ function fetchEntity(dispatch) {
                     ],
                     /* tuple */[
                       "authorization",
-                      "Token token='7Uek8JCj49yPDXnZksaE', email='lc@smartkarma.com'"
+                      token
                     ]
                   ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined)(/* () */0)).then((function (prim) {
               return prim.json();
@@ -127,6 +129,7 @@ exports.decodeData = decodeData;
 exports.decodeJsonData = decodeJsonData;
 exports.decodeRecord = decodeRecord;
 exports.apiEndpoint = apiEndpoint;
+exports.token = token;
 exports.fetchEntity = fetchEntity;
 exports.initialState = initialState;
 exports.reducer = reducer;
