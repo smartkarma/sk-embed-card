@@ -135,7 +135,8 @@ let make = () => {
             | Some(entity) => 
               <div className="bg-white shadow rounded flex overflow-scroll w-2/5 mb-8 mt-8">
                 {React.string(entity.shortName)}
-              </div>;
+                <PriceChart />
+              </div>
             }
           }
         }

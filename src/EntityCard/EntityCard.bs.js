@@ -6,6 +6,7 @@ var Fetch = require("bs-fetch/src/Fetch.js");
 var React = require("react");
 var RemoteData = require("remotedata-re/src/RemoteData.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
+var PriceChart$ReasonReactExamples = require("../PriceChart/PriceChart.bs.js");
 
 function decodeAttributes(parentJson, json) {
   return /* record */[
@@ -111,7 +112,7 @@ function EntityCard(Props) {
               }, "Loading...") : (
             entity !== undefined ? React.createElement("div", {
                     className: "bg-white shadow rounded flex overflow-scroll w-2/5 mb-8 mt-8"
-                  }, entity[/* shortName */1]) : null
+                  }, entity[/* shortName */1], React.createElement(PriceChart$ReasonReactExamples.make, { })) : null
           ));
   }
   return React.createElement("div", {
