@@ -29,7 +29,7 @@ let makeContainer = text => {
 
 // All 4 examples.
 ReactDOMRe.render(
-  <EntityCard />,
+  <EntityCard id="dbs-group-holdings-ltd"/>,
   makeContainer("Entity Card"),
 );
 

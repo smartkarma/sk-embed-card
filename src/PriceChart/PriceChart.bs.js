@@ -39,13 +39,14 @@ function decodePrice(json) {
         ];
 }
 
-var priceEndpoint = "https://silat-staging.smartkarma.com/v1/chart/D05.SI?start-time=2018-11-28";
-
-var token = "Token token=\"eQeRBgUUJ3CVtuRAK99R\", email=\"echeng@glgroup.com\"";
-
-function fetchPrice(dispatch) {
+function fetchPrice(ticker, dispatch, startDate, param) {
   Curry._1(dispatch, /* Loading */0);
-  fetch(priceEndpoint, Fetch.RequestInit.make(undefined, /* array */[
+  var _startDate = startDate !== undefined ? startDate : Luxon.DateTime.local().minus({
+            years: 1
+          }).toSQLDate();
+  var endpoint = "https://silat-staging.smartkarma.com/v1/chart/" + (ticker + ("?start-time=" + _startDate));
+  var token = "Token token=\"eQeRBgUUJ3CVtuRAK99R\", email=\"echeng@glgroup.com\"";
+  fetch(endpoint, Fetch.RequestInit.make(undefined, /* array */[
                     /* tuple */[
                       "authorization",
                       token
@@ -92,13 +93,14 @@ function reducer(state, action) {
 }
 
 function PriceChart(Props) {
+  Props.entity;
   var match = React.useReducer(reducer, initialState);
   var dispatch = match[1];
   var state = match[0];
   React.useEffect((function () {
           var match = state[/* price */0];
           if (typeof match === "number") {
-            fetchPrice(dispatch);
+            fetchPrice("D05.SI", dispatch, undefined, /* () */0);
           } else {
             switch (match.tag | 0) {
               case /* Loading */0 :
@@ -118,7 +120,6 @@ function PriceChart(Props) {
                                     /* close */Caml_array.caml_array_get(price[/* close */3], i)
                                   ];
                           }));
-                    console.log(ohlc);
                     var option = {
                       title: {
                         text: "Fruit Consumption"
@@ -139,14 +140,12 @@ function PriceChart(Props) {
         }));
   return React.createElement("div", undefined, React.createElement("div", {
                   id: "container"
-                }, "Main"));
+                }, "Loading..."));
 }
 
 var make = PriceChart;
 
 exports.decodePrice = decodePrice;
-exports.priceEndpoint = priceEndpoint;
-exports.token = token;
 exports.fetchPrice = fetchPrice;
 exports.initialState = initialState;
 exports.reducer = reducer;

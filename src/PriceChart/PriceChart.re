@@ -1,7 +1,3 @@
-type dt;
-[@bs.module "luxon"] [@bs.scope "DateTime"] external fromISO: string => dt = "fromISO";
-[@bs.send] external toMillis: dt => int = "toMillis";
-
 type hc;
 [@bs.module] external highcharts: hc = "highcharts/highstock";
 [@bs.module] external highchartsExport: (hc) => unit = "highcharts/modules/exporting";
@@ -81,14 +77,22 @@ type action =
   | PriceLoaded(price)
   | PriceError(string);
 
-let priceEndpoint = "https://silat-staging.smartkarma.com/v1/chart/D05.SI?start-time=2018-11-28";
-let token = "Token token=\"eQeRBgUUJ3CVtuRAK99R\", email=\"echeng@glgroup.com\"";
-
-let fetchPrice = (dispatch) => {
+let fetchPrice = (~ticker, ~dispatch, ~startDate=?, ()) => {
   dispatch(Loading);
+
+  let _startDate = switch (startDate) {
+  | None => Luxon.(
+      local() -> minusObj(durationObj(~years=1, ())) -> toSQLDate
+    )
+  | Some(d) => d
+  };
+
+  let endpoint = "https://silat-staging.smartkarma.com/v1/chart/" ++ ticker ++ "?start-time=" ++ _startDate;
+  let token = "Token token=\"eQeRBgUUJ3CVtuRAK99R\", email=\"echeng@glgroup.com\"";
+
   Js.Promise.(
     Fetch.fetchWithInit(
-      priceEndpoint,
+      endpoint,
       Fetch.RequestInit.make(
         ~headers=
           Fetch.HeadersInit.makeWithArray([|
@@ -113,7 +117,6 @@ let fetchPrice = (dispatch) => {
     })
   ) 
   |> ignore;
-  ()
 };
 
 
@@ -129,22 +132,18 @@ let initialState = {
 
 let reducer = (state, action) =>
   switch (action) {
-  | Loading =>
-    {
-      ...state,
-      price: RemoteData.Loading(None),
-    };
+  | Loading => { ...state, price: RemoteData.Loading(None) };
   | PriceLoaded(price) => {...state, price: RemoteData.Success(Some(price))}
   | PriceError(err) => {...state, price: RemoteData.Failure(err)}
   };
 
 [@react.component]
-let make = () => {
+let make = (~entity) => {
   let (state, dispatch) = React.useReducer(reducer, initialState);
 
   React.useEffect(() => {
     switch (state.price) {
-    | NotAsked => fetchPrice(dispatch)
+    | NotAsked => fetchPrice(~ticker="D05.SI", ~dispatch=dispatch, ())
     | Success(somePrice) =>
       switch(somePrice) {
       | Some(price) => {
@@ -153,14 +152,13 @@ let make = () => {
             let ohlc = price.date ->
               Belt.Array.mapWithIndex((i, date) => 
                 {
-                  date: fromISO(date) -> toMillis,
+                  date: Luxon.fromISO(date) -> Luxon.toMillis,
                   open_: price.open_[i],
                   high: price.high[i],
                   low: price.low[i],
                   close: price.close[i],
                 }
               );
-              Js.log(ohlc);
             let option = hcOption(
               ~title=titleType(~text="Fruit Consumption", ()),
               ~series=[|
@@ -180,7 +178,7 @@ let make = () => {
 
   <div>
     <div id="container">
-      {React.string("Main")}
+      {React.string("Loading...")}
     </div>
   </div>
 };
