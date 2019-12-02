@@ -1,3 +1,7 @@
+type dt;
+[@bs.module "luxon"] [@bs.scope "DateTime"] external fromISO: string => dt = "fromISO";
+[@bs.send] external toMillis: dt => int = "toMillis";
+
 type hc;
 [@bs.module] external highcharts: hc = "highcharts/highstock";
 [@bs.module] external highchartsExport: (hc) => unit = "highcharts/modules/exporting";
@@ -25,7 +29,7 @@ type axisType = {
 };
 
 type pricePoint =  {
-  date: string,
+  date: int,
   open_: float,
   high: float,
   low: float,
@@ -107,7 +111,8 @@ let fetchPrice = (dispatch) => {
         dispatch(PriceError("Error fetching the data")) 
         resolve()
     })
-  );
+  ) 
+  |> ignore;
   ()
 };
 
@@ -148,7 +153,7 @@ let make = () => {
             let ohlc = price.date ->
               Belt.Array.mapWithIndex((i, date) => 
                 {
-                  date,
+                  date: fromISO(date) -> toMillis,
                   open_: price.open_[i],
                   high: price.high[i],
                   low: price.low[i],

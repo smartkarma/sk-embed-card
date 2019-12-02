@@ -3,6 +3,7 @@
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Fetch = require("bs-fetch/src/Fetch.js");
+var Luxon = require("luxon");
 var React = require("react");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Caml_array = require("bs-platform/lib/js/caml_array.js");
@@ -110,7 +111,7 @@ function PriceChart(Props) {
                     state[/* isChartRendered */1][0] = true;
                     var ohlc = Belt_Array.mapWithIndex(price[/* date */5], (function (i, date) {
                             return /* record */[
-                                    /* date */date,
+                                    /* date */Luxon.DateTime.fromISO(date).toMillis(),
                                     /* open_ */Caml_array.caml_array_get(price[/* open_ */0], i),
                                     /* high */Caml_array.caml_array_get(price[/* high */1], i),
                                     /* low */Caml_array.caml_array_get(price[/* low */2], i),
