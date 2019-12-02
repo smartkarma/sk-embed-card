@@ -1,7 +1,9 @@
 type hc;
-[@bs.module] external highcharts: hc = "highcharts";
+[@bs.module] external highcharts: hc = "highcharts/highstock";
 [@bs.module] external highchartsExport: (hc) => unit = "highcharts/modules/exporting";
+[@bs.module] external highchartsData: (hc) => unit = "highcharts/modules/data";
 highchartsExport(highcharts);
+highchartsData(highcharts);
 
 [@bs.deriving abstract]
 type chartType = {
@@ -22,52 +24,52 @@ type axisType = {
   [@bs.optional] others: unit,
 };
 
-[@bs.deriving abstract]
-type dataPoint = {
-  name: string,
-  data: array(int),
-  [@bs.optional] others: unit,
+type pricePoint =  {
+  date: string,
+  open_: float,
+  high: float,
+  low: float,
+  close: float,
 };
 
-type seriesType = array(dataPoint);
+[@bs.deriving abstract]
+type seriesType = {
+  [@bs.as "type"] type_: string,
+  [@bs.optional] id: string,
+  [@bs.optional] data: array(pricePoint),
+};
 
 [@bs.deriving abstract]
 type hcOption = {
-  chart: chartType,
-  series: seriesType,
+  [@bs.optional] chart: chartType,
   title: titleType,
-  xAxis: axisType,
-  yAxis: axisType,
+  series: array(seriesType),
+  [@bs.optional] xAxis: axisType,
+  [@bs.optional] yAxis: axisType,
   [@bs.optional] others: unit,
-}
+};
 
-let option = hcOption(
-  ~chart=chartType(~type_="bar", ()),
-  ~series=[|
-    dataPoint(~name="Jane", ~data=[|1, 0 , 4|], ()),
-    dataPoint(~name="Jone", ~data=[|5, 7, 3|], ()),
-  |],
-  ~title=titleType(~text="Fruit Consumption", ()),
-  ~xAxis=axisType(~categories=[|"Apples", "Bananas", "Oranges"|], ()),
-  ~yAxis=axisType(~title=titleType(~text="Fruit eaten", ()), ()),
-  ()
-);
-
-// Js.log(option |> chartGet |> type_Get)
-
-[@bs.module "highcharts"] [@ba.val] external chart: (string, hcOption) => unit = "chart";
-
-
+[@bs.module "highcharts/highstock"] [@ba.val] external stockChart: (string, hcOption) => unit = "stockChart";
 
 type priceData('a) = RemoteData.t('a, 'a, string);
 
 type price =  {
+  open_: array(float),
+  high: array(float),
+  low: array(float),
   close: array(float),
+  volume: array(int),
+  date: array(string),
 };
 
 let decodePrice = json => 
   Json.Decode.{
-    close: json |> field("close", array(float))
+    open_: json |> field("open", array(float)),
+    high: json |> field("high", array(float)),
+    low: json |> field("low", array(float)),
+    close: json |> field("close", array(float)),
+    volume: json |> field("volume", array(int)),
+    date: json |> field("time_period", array(string)),
   };
 
 type action =
@@ -96,13 +98,11 @@ let fetchPrice = (dispatch) => {
     |> then_(json => {
         json |> decodePrice |> (
           (price) => {
-              Js.log(price);
              dispatch(PriceLoaded(price));
              resolve();
            }
          )
-    }
-       )
+        })
     |> catch((_) =>  {
         dispatch(PriceError("Error fetching the data")) 
         resolve()
@@ -113,10 +113,14 @@ let fetchPrice = (dispatch) => {
 
 
 type state = {
-  price: priceData(option(price))
+  price: priceData(option(price)),
+  mutable isChartRendered: ref(bool),
 };
 
-let initialState = {price: RemoteData.NotAsked};
+let initialState = {
+  price: RemoteData.NotAsked,
+  isChartRendered: ref(false),
+};
 
 let reducer = (state, action) =>
   switch (action) {
@@ -134,9 +138,36 @@ let make = () => {
   let (state, dispatch) = React.useReducer(reducer, initialState);
 
   React.useEffect(() => {
-    chart("container", option);
     switch (state.price) {
     | NotAsked => fetchPrice(dispatch)
+    | Success(somePrice) =>
+      switch(somePrice) {
+      | Some(price) => {
+          if (!state.isChartRendered^) {
+            state.isChartRendered := true;
+            let ohlc = price.date ->
+              Belt.Array.mapWithIndex((i, date) => 
+                {
+                  date,
+                  open_: price.open_[i],
+                  high: price.high[i],
+                  low: price.low[i],
+                  close: price.close[i],
+                }
+              );
+              Js.log(ohlc);
+            let option = hcOption(
+              ~title=titleType(~text="Fruit Consumption", ()),
+              ~series=[|
+                seriesType(~id="ohlc", ~type_="ohlc", ~data=ohlc, ())
+              |],
+              ()
+            );
+            stockChart("container", option)
+          }
+        }
+      | None => ()
+      }
     | _ => ()
     }
     None;
