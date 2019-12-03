@@ -21,7 +21,8 @@
     "pluralize": "^8.0.0",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
-    "reason-react": ">=0.7.0"
+    "reason-react": ">=0.7.0",
+    "reason-react-native": "^0.61.0"
   },
   "devDependencies": {
     "@glennsl/bs-json": "^5.0.1",

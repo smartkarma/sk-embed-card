@@ -18,7 +18,8 @@
     "reason-react",
     "remotedata-re",
     "@glennsl/bs-json",
-    "bs-fetch"
+    "bs-fetch",
+    "reason-react-native"
   ],
   "refmt": 3
 }
