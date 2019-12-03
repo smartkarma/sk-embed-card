@@ -74,32 +74,43 @@ let fetchPrice = (~ticker, ~startDate=?, ()) => () => {
 
 [@react.component]
 let make = (~entity: Entity.t) => {
-  <>
-    <div id="container" />
-    <LoadData.Price fetch=fetchPrice(~ticker="D05.SI", ())>
-      {
-        (price: Price.t) => {
-          let ohlc = price.date ->
-            Belt.Array.mapWithIndex((i, date): Price.pricePoint => 
-              {
-                date: Luxon.fromISO(date) -> Luxon.toMillis,
-                open_: price.open_[i],
-                high: price.high[i],
-                low: price.low[i],
-                close: price.close[i],
-              }
+  let yahooTicker = entity.yahooTicker;
+  let bbgTicker = Entity.bbgTicker(entity);
+  let ticker = switch (yahooTicker, bbgTicker) {
+  | ("", "") => ""
+  | ("", _) => bbgTicker
+  | (_, _) => yahooTicker
+  };
+  if (ticker == "") {
+    React.string("Cannot find the ticker")
+  } else {
+    <>
+      <div id="container" />
+      <LoadData.Price fetch=fetchPrice(~ticker=ticker, ())>
+        {
+          (price: Price.t) => {
+            let ohlc = price.date ->
+              Belt.Array.mapWithIndex((i, date): Price.pricePoint => 
+                {
+                  date: Luxon.fromISO(date) -> Luxon.toMillis,
+                  open_: price.open_[i],
+                  high: price.high[i],
+                  low: price.low[i],
+                  close: price.close[i],
+                }
+              );
+            let option = hcOption(
+              ~title=titleType(~text=entity.shortName, ()),
+              ~series=[|
+                seriesType(~id="ohlc", ~type_="ohlc", ~data=ohlc, ())
+              |],
+              ()
             );
-          let option = hcOption(
-            ~title=titleType(~text=entity.shortName, ()),
-            ~series=[|
-              seriesType(~id="ohlc", ~type_="ohlc", ~data=ohlc, ())
-            |],
-            ()
-          );
-          stockChart("container", option)
-          React.null
+            stockChart("container", option)
+            React.null
+          }
         }
-      }
-    </LoadData.Price>
-  </>
+      </LoadData.Price>
+    </>
+  }
 };

@@ -8,6 +8,7 @@ var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var Highstock = require("highcharts/highstock");
 var Data = require("highcharts/modules/data");
 var Price$ReasonReactExamples = require("../Model/Price.bs.js");
+var Entity$ReasonReactExamples = require("../Model/Entity.bs.js");
 var LoadData$ReasonReactExamples = require("../LoadData/LoadData.bs.js");
 var Exporting = require("highcharts/modules/exporting");
 
@@ -39,36 +40,45 @@ function fetchPrice(ticker, startDate, param, param$1) {
 
 function PriceChart(Props) {
   var entity = Props.entity;
-  return React.createElement(React.Fragment, undefined, React.createElement("div", {
-                  id: "container"
-                }), React.createElement(LoadData$ReasonReactExamples.Price.make, {
-                  fetch: (function (param) {
-                      return fetchPrice("D05.SI", undefined, /* () */0, param);
-                    }),
-                  children: (function (price) {
-                      var ohlc = Belt_Array.mapWithIndex(price[/* date */5], (function (i, date) {
-                              return /* record */[
-                                      /* date */Luxon.DateTime.fromISO(date).toMillis(),
-                                      /* open_ */Caml_array.caml_array_get(price[/* open_ */0], i),
-                                      /* high */Caml_array.caml_array_get(price[/* high */1], i),
-                                      /* low */Caml_array.caml_array_get(price[/* low */2], i),
-                                      /* close */Caml_array.caml_array_get(price[/* close */3], i)
-                                    ];
-                            }));
-                      var option = {
-                        title: {
-                          text: entity[/* shortName */1]
-                        },
-                        series: /* array */[{
-                            type: "ohlc",
-                            id: "ohlc",
-                            data: ohlc
-                          }]
-                      };
-                      Highstock.stockChart("container", option);
-                      return null;
-                    })
-                }));
+  var yahooTicker = entity[/* yahooTicker */3];
+  var bbgTicker = Entity$ReasonReactExamples.bbgTicker(entity);
+  var ticker = yahooTicker === "" ? (
+      bbgTicker === "" ? "" : bbgTicker
+    ) : yahooTicker;
+  if (ticker === "") {
+    return "Cannot find the ticker";
+  } else {
+    return React.createElement(React.Fragment, undefined, React.createElement("div", {
+                    id: "container"
+                  }), React.createElement(LoadData$ReasonReactExamples.Price.make, {
+                    fetch: (function (param) {
+                        return fetchPrice(ticker, undefined, /* () */0, param);
+                      }),
+                    children: (function (price) {
+                        var ohlc = Belt_Array.mapWithIndex(price[/* date */5], (function (i, date) {
+                                return /* record */[
+                                        /* date */Luxon.DateTime.fromISO(date).toMillis(),
+                                        /* open_ */Caml_array.caml_array_get(price[/* open_ */0], i),
+                                        /* high */Caml_array.caml_array_get(price[/* high */1], i),
+                                        /* low */Caml_array.caml_array_get(price[/* low */2], i),
+                                        /* close */Caml_array.caml_array_get(price[/* close */3], i)
+                                      ];
+                              }));
+                        var option = {
+                          title: {
+                            text: entity[/* shortName */1]
+                          },
+                          series: /* array */[{
+                              type: "ohlc",
+                              id: "ohlc",
+                              data: ohlc
+                            }]
+                        };
+                        Highstock.stockChart("container", option);
+                        return null;
+                      })
+                  }));
+  }
 }
 
 var make = PriceChart;
