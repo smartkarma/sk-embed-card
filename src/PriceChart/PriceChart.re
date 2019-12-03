@@ -1,7 +1,7 @@
 type hc;
 [@bs.module] external highcharts: hc = "highcharts/highstock";
-[@bs.module] external highchartsExport: (hc) => unit = "highcharts/modules/exporting";
-[@bs.module] external highchartsData: (hc) => unit = "highcharts/modules/data";
+[@bs.module] external highchartsExport: hc => unit = "highcharts/modules/exporting";
+[@bs.module] external highchartsData: hc => unit = "highcharts/modules/data";
 
 highchartsExport(highcharts);
 highchartsData(highcharts);
@@ -89,16 +89,26 @@ let make = (~entity: Entity.t) => {
       <LoadData.Price fetch=fetchPrice(~ticker=ticker, ())>
         {
           (price: Price.t) => {
-            Js.log(price);
-            let ohlc = price.date ->
-              Belt.Array.mapWithIndex((i, date): Price.pricePoint => 
-                {
-                  date: Luxon.fromISO(date) -> Luxon.toMillis,
-                  open_: price.open_[i],
-                  high: price.high[i],
-                  low: price.low[i],
-                  close: price.close[i],
-                }
+              let ohlc = Belt.Array.(
+                price.date 
+                -> mapWithIndex((i, date): Price.pricePoint => 
+                  {
+                    date: Luxon.fromISO(date) -> Luxon.toMillis,
+                    open_: price.open_[i],
+                    high: price.high[i],
+                    low: price.low[i],
+                    close: price.close[i],
+                  }
+                )
+                -> keepMap(p => 
+                  switch ((p.open_, p.high, p.low, p.close)) {
+                  | (0.0, _, _, _) 
+                  | (_, 0.0, _, _)
+                  | (_, _, 0.0, _)
+                  | (_, _, _, 0.0) => None
+                  | (_, _, _, _)  => Some(p)
+                  }
+                )
               );
             let option = hcOption(
               ~title=titleType(~text=entity.shortName, ()),

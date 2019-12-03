@@ -55,15 +55,23 @@ function PriceChart(Props) {
                         return fetchPrice(ticker, undefined, /* () */0, param);
                       }),
                     children: (function (price) {
-                        console.log(price);
-                        var ohlc = Belt_Array.mapWithIndex(price[/* date */5], (function (i, date) {
-                                return /* record */[
-                                        /* date */Luxon.DateTime.fromISO(date).toMillis(),
-                                        /* open_ */Caml_array.caml_array_get(price[/* open_ */0], i),
-                                        /* high */Caml_array.caml_array_get(price[/* high */1], i),
-                                        /* low */Caml_array.caml_array_get(price[/* low */2], i),
-                                        /* close */Caml_array.caml_array_get(price[/* close */3], i)
-                                      ];
+                        var ohlc = Belt_Array.keepMap(Belt_Array.mapWithIndex(price[/* date */5], (function (i, date) {
+                                    return /* record */[
+                                            /* date */Luxon.DateTime.fromISO(date).toMillis(),
+                                            /* open_ */Caml_array.caml_array_get(price[/* open_ */0], i),
+                                            /* high */Caml_array.caml_array_get(price[/* high */1], i),
+                                            /* low */Caml_array.caml_array_get(price[/* low */2], i),
+                                            /* close */Caml_array.caml_array_get(price[/* close */3], i)
+                                          ];
+                                  })), (function (p) {
+                                var match = p[/* open_ */1];
+                                var match$1 = p[/* high */2];
+                                var match$2 = p[/* low */3];
+                                var match$3 = p[/* close */4];
+                                if (match !== 0.0 && match$1 !== 0.0 && match$2 !== 0.0 && match$3 !== 0.0) {
+                                  return p;
+                                }
+                                
                               }));
                         var option = {
                           title: {

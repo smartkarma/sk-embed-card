@@ -31,7 +31,7 @@ let decodeArrayString = (fieldName, json) =>
   );
 
 let decodePrice = json => 
-  Json.Decode.{
+  {
     open_: json |> decodeArrayFloat("open"),
     high: json |> decodeArrayFloat("high"),
     low: json |> decodeArrayFloat("low"),

@@ -12,7 +12,7 @@ let decodeString = (fieldName, json) =>
   )
 
 let decodeRecord = (parentJson, json) =>  
-  Json.Decode.{
+  {
     id: parentJson |> decodeString("id"),
     shortName: json |> decodeString("short-name"),
     slug: json |> decodeString("slug"),
