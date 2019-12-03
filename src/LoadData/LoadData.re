@@ -25,7 +25,8 @@ module MakeLoadData = (DataType: BaseDataType) => {
         dispatch(DataLoaded(data))
         resolve()
       })
-      |> catch((_) =>  {
+      |> catch((e) =>  {
+        Js.log(e);
         dispatch(DataError("Error fetching the data")) ;
         resolve();
       })

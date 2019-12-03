@@ -3,13 +3,19 @@
 var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 
+function decodeString(fieldName, json) {
+  return Json_decode.field(fieldName, (function (param) {
+                return Json_decode.withDefault("", Json_decode.string, param);
+              }), json);
+}
+
 function decodeRecord(parentJson, json) {
   return /* record */[
-          /* id */Json_decode.field("id", Json_decode.string, parentJson),
-          /* shortName */Json_decode.field("short-name", Json_decode.string, json),
-          /* slug */Json_decode.field("slug", Json_decode.string, json),
-          /* yahooTicker */Json_decode.field("yahoo-ticker", Json_decode.string, json),
-          /* security */Json_decode.field("security", Json_decode.string, json)
+          /* id */decodeString("id", parentJson),
+          /* shortName */decodeString("short-name", json),
+          /* slug */decodeString("slug", json),
+          /* yahooTicker */decodeString("yahoo-ticker", json),
+          /* security */decodeString("security", json)
         ];
 }
 
@@ -34,6 +40,7 @@ function bbgTicker(entity) {
   return getBbgTicker(getShortSecurity(entity[/* security */4]));
 }
 
+exports.decodeString = decodeString;
 exports.decodeRecord = decodeRecord;
 exports.getShortSecurity = getShortSecurity;
 exports.getBbgTicker = getBbgTicker;

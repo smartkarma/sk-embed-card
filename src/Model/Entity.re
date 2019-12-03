@@ -6,13 +6,18 @@ type t = {
   security: string,
 };
 
+let decodeString = (fieldName, json) =>
+  Json.Decode.(
+    json |> field(fieldName, withDefault("", string))
+  )
+
 let decodeRecord = (parentJson, json) =>  
   Json.Decode.{
-    id: parentJson |> field("id", string),
-    shortName: json |> field("short-name", string),
-    slug: json |> field("slug", string),
-    yahooTicker: json |> field("yahoo-ticker", string),
-    security: json |> field("security", string),
+    id: parentJson |> decodeString("id"),
+    shortName: json |> decodeString("short-name"),
+    slug: json |> decodeString("slug"),
+    yahooTicker: json |> decodeString("yahoo-ticker"),
+    security: json |> decodeString("security"),
   }
 
 let getShortSecurity = security => {

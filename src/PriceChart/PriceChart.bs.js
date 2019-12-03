@@ -55,6 +55,7 @@ function PriceChart(Props) {
                         return fetchPrice(ticker, undefined, /* () */0, param);
                       }),
                     children: (function (price) {
+                        console.log(price);
                         var ohlc = Belt_Array.mapWithIndex(price[/* date */5], (function (i, date) {
                                 return /* record */[
                                         /* date */Luxon.DateTime.fromISO(date).toMillis(),

@@ -89,6 +89,7 @@ let make = (~entity: Entity.t) => {
       <LoadData.Price fetch=fetchPrice(~ticker=ticker, ())>
         {
           (price: Price.t) => {
+            Js.log(price);
             let ohlc = price.date ->
               Belt.Array.mapWithIndex((i, date): Price.pricePoint => 
                 {

@@ -15,12 +15,27 @@ type pricePoint =  {
   close: float,
 };
 
+let decodeArrayFloat = (fieldName, json) =>
+  Json.Decode.(
+    json |> field(fieldName, array(withDefault(0.0, float)))
+  )
+
+let decodeArrayInt = (fieldName, json) =>
+  Json.Decode.(
+    json |> field(fieldName, array(withDefault(0, int)))
+  )
+
+let decodeArrayString = (fieldName, json) =>
+  Json.Decode.(
+    json |> field(fieldName, array(withDefault("", string)))
+  );
+
 let decodePrice = json => 
   Json.Decode.{
-    open_: json |> field("open", array(float)),
-    high: json |> field("high", array(float)),
-    low: json |> field("low", array(float)),
-    close: json |> field("close", array(float)),
-    volume: json |> field("volume", array(int)),
-    date: json |> field("time_period", array(string)),
+    open_: json |> decodeArrayFloat("open"),
+    high: json |> decodeArrayFloat("high"),
+    low: json |> decodeArrayFloat("low"),
+    close: json |> decodeArrayFloat("close"),
+    volume: json |> decodeArrayInt("volume"),
+    date: json |> decodeArrayString("time_period"),
   };

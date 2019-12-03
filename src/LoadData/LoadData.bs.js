@@ -12,7 +12,8 @@ function MakeLoadData(DataType) {
     Curry._1($$fetch, /* () */0).then((function (data) {
               Curry._1(dispatch, /* DataLoaded */Block.__(0, [data]));
               return Promise.resolve(/* () */0);
-            })).catch((function (param) {
+            })).catch((function (e) {
+            console.log(e);
             Curry._1(dispatch, /* DataError */Block.__(1, ["Error fetching the data"]));
             return Promise.resolve(/* () */0);
           }));
@@ -82,7 +83,8 @@ function fetchData($$fetch, dispatch) {
   Curry._1($$fetch, /* () */0).then((function (data) {
             Curry._1(dispatch, /* DataLoaded */Block.__(0, [data]));
             return Promise.resolve(/* () */0);
-          })).catch((function (param) {
+          })).catch((function (e) {
+          console.log(e);
           Curry._1(dispatch, /* DataError */Block.__(1, ["Error fetching the data"]));
           return Promise.resolve(/* () */0);
         }));
@@ -155,7 +157,8 @@ function fetchData$1($$fetch, dispatch) {
   Curry._1($$fetch, /* () */0).then((function (data) {
             Curry._1(dispatch, /* DataLoaded */Block.__(0, [data]));
             return Promise.resolve(/* () */0);
-          })).catch((function (param) {
+          })).catch((function (e) {
+          console.log(e);
           Curry._1(dispatch, /* DataError */Block.__(1, ["Error fetching the data"]));
           return Promise.resolve(/* () */0);
         }));

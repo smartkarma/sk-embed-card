@@ -26,7 +26,7 @@ function makeContainer(text) {
 }
 
 ReactDom.render(React.createElement(EntityCard$ReasonReactExamples.make, {
-          id: "dbs-group-holdings-ltd"
+          id: "hdfc-bank-limited"
         }), makeContainer("Entity Card"));
 
 exports.style = style;
