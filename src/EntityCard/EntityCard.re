@@ -5,8 +5,9 @@ module Styles = {
     fontSize(px(Theme.fontSize18)),
     backgroundColor(white),
     borderRadius(px(5)),
-    boxShadow(Shadow.box(~y=px(3), ~blur=px(5), rgba(0, 0, 0, 0.3))),
+    boxShadow(Shadow.box(~y=px(1), ~blur=px(2), Theme.inactiveGrayShade)),
     fontFamily(Theme.sanSerif),
+    margin(px(Theme.contentPadding)),
   ]);
 
   let head = style([

@@ -11,6 +11,7 @@ let contentPadding10 = 10;
 let sanSerif = "Roboto, sans-serif";
 
 let nearlyWhite = "#eee";
+let inactiveGrayShade = Css.rgba(0, 0, 0, 0.2);
 
 let global = {j|
   body {

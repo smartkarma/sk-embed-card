@@ -1,7 +1,10 @@
 'use strict';
 
+var Css = require("bs-css/src/Css.js");
 
 var nearlyWhite = "#eee";
+
+var inactiveGrayShade = Css.rgba(0, 0, 0, 0.2);
 
 var $$global = "\n  body {\n    background-color: " + (String(nearlyWhite) + ";\n    display: flex;\n    flex-direction: column;\n  }\n\n  * {\n    margin: 0px;\n    padding: 0px;\n  }\n");
 
@@ -33,5 +36,6 @@ exports.contentPadding = contentPadding;
 exports.contentPadding10 = contentPadding10;
 exports.sanSerif = sanSerif;
 exports.nearlyWhite = nearlyWhite;
+exports.inactiveGrayShade = inactiveGrayShade;
 exports.$$global = $$global;
-/* global Not a pure module */
+/* inactiveGrayShade Not a pure module */

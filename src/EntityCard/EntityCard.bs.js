@@ -15,10 +15,13 @@ var container = Css.style(/* :: */[
         /* :: */[
           Css.borderRadius(Css.px(5)),
           /* :: */[
-            Css.boxShadow(Css.Shadow.box(undefined, Css.px(3), Css.px(5), undefined, undefined, Css.rgba(0, 0, 0, 0.3))),
+            Css.boxShadow(Css.Shadow.box(undefined, Css.px(1), Css.px(2), undefined, undefined, Theme$ReasonReactExamples.inactiveGrayShade)),
             /* :: */[
               Css.fontFamily(Theme$ReasonReactExamples.sanSerif),
-              /* [] */0
+              /* :: */[
+                Css.margin(Css.px(Theme$ReasonReactExamples.contentPadding)),
+                /* [] */0
+              ]
             ]
           ]
         ]

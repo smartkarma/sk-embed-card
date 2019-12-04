@@ -6,15 +6,9 @@ var React = require("react");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var Highstock = require("highcharts/highstock");
-var Data = require("highcharts/modules/data");
 var Price$ReasonReactExamples = require("../Model/Price.bs.js");
 var Entity$ReasonReactExamples = require("../Model/Entity.bs.js");
 var LoadData$ReasonReactExamples = require("../LoadData/LoadData.bs.js");
-var Exporting = require("highcharts/modules/exporting");
-
-Exporting(Highstock);
-
-Data(Highstock);
 
 function fetchPrice(ticker, startDate, param, param$1) {
   var _startDate = startDate !== undefined ? startDate : Luxon.DateTime.local().minus({
@@ -74,13 +68,11 @@ function PriceChart(Props) {
                                 
                               }));
                         var option = {
-                          title: {
-                            text: entity[/* shortName */1]
-                          },
                           series: /* array */[{
                               type: "ohlc",
                               id: "ohlc",
-                              data: ohlc
+                              data: ohlc,
+                              name: entity[/* shortName */1]
                             }]
                         };
                         Highstock.stockChart("container", option);
@@ -94,4 +86,4 @@ var make = PriceChart;
 
 exports.fetchPrice = fetchPrice;
 exports.make = make;
-/*  Not a pure module */
+/* luxon Not a pure module */
