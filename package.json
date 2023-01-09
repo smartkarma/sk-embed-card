@@ -18,7 +18,7 @@
   "dependencies": {
     "bs-css": "^11.0.0",
     "highcharts": "^7.2.1",
-    "luxon": "^1.21.3",
+    "luxon": "^1.28.1",
     "pluralize": "^8.0.0",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
